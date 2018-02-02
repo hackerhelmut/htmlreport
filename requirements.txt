@@ -1,0 +1,7 @@
+pyparsing
+pylatexenc
+#python-dateutil
+jinja2
+#objectpath
+-e git+https://github.com/hackerhelmut/ObjectPath.git#egg=objectpath-master
+ruamel.yaml

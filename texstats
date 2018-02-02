@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# vim: set fileencoding=utf-8
+
+python2 $(dirname ${0}) ${@}

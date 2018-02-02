@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <link rel="apple-touch-icon" sizes="76x76" href="assets/img/apple-icon.png" />
+    <link rel="icon" type="image/png" href="assets/img/favicon.png" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+    <title>{{ config.title }}</title>
+
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+    <meta name="viewport" content="width=device-width" />
+
+    <!-- Bootstrap core CSS     -->
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet" />
+
+    <!--  Material Dashboard CSS    -->
+    <link href="assets/css/material-dashboard.css" rel="stylesheet"/>
+
+    <!--  CSS for Demo Purpose, don't include it in your project     -->
+    <link href="assets/css/demo.css" rel="stylesheet" />
+
+    <!--     Fonts and icons     -->
+    <!--<link href="http://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css" rel="stylesheet">-->
+    <link href='//fonts.googleapis.com/css?family=Roboto:400,700,300|Material+Icons' rel='stylesheet' type='text/css'>
+    <script src="assets/js/jquery-3.1.0.min.js" type="text/javascript"></script>
+    <script src="assets/js/moment.min.js" type="text/javascript"></script>
+</head>
+
+<body>
+
+    <div class="wrapper">
+
+        <div class="sidebar" data-color="purple" data-image="assets/img/sidebar-1.jpg">
+          {# comment 
+                Tip 1: You can change the color of the sidebar using: data-color="purple | blue | green | orange | red"
+
+                Tip 2: you can also add an image using data-image tag
+          #}
+
+            <div class="logo">
+                <a href="{{ config.name }}" class="simple-text">
+                   {{ config.title }}
+                </a>
+            </div>
+
+            <div class="sidebar-wrapper">
+                <ul class="nav">
+                  {% for panel_name, panel in panels.items() %}
+                    <li {% if loop.first %}class="active"{% endif %}>
+                        <a data-hide=".main-panel" href="#panel-{{ panel_name }}">
+                            <i class="material-icons">{{ panel.icon }}</i>
+                            <p>{{ panel.title }}</p>
+                        </a>
+                    </li>
+                  {% endfor %}
+                </ul>
+            </div>
+        </div>
+                    {% macro valueview(id, title, value, color, icon, hint=None) -%}
+                        <div class="col-lg-3 col-md-6 col-sm-6">
+                            <div class="card card-stats" id="{{ id }}">
+                                <div class="card-header" data-background-color="{{ color }}">
+                                    <i class="material-icons">{{ icon }}</i>
+                                </div>
+                                <div class="card-content">
+                                    <p class="category">{{ title }}</p>
+                                    <h3 class="title">{{ value.format() }}</h3>
+                                </div>
+                                {% if hint -%}
+                                <div class="card-footer">
+                                    <div class="stats">
+                                      {{ hint.format() }}
+                                    </div>
+                                </div>
+                                {%- endif %}
+                            </div>
+                        </div>
+                    {%- endmacro %}
+                    {% macro graphview(id, title, subtitle, color, hint, style, data, options) %}
+                        <div class="col-md-4">
+                            <div class="card" id="{{ id }}">
+                                <div class="card-header card-chart" data-background-color="{{ color }}">
+                                    <div class="ct-chart"></div>
+                                </div>
+                                <div class="card-content">
+                                    <h4 class="title">{{ title }}</h4>
+                                    <p class="category">{{ subtitle }}</p>
+                                </div>
+                                {% if hint -%}
+                                <div class="card-footer">
+                                    <div class="stats">
+                                      {{ hint.format() }}
+                                    </div>
+                                </div>
+                                {%- endif %}
+                            </div>
+                        </div>
+                    {% endmacro %}
+
+
+
+        {% for panel_name, panel in panels.items() %}
+        <div class="main-panel" id="panel-{{ panel_name }}">
+            <nav class="navbar navbar-transparent navbar-absolute">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <a class="navbar-brand" href="#">{{ panel.title }}</a>
+                    </div>
+                    <div class="collapse navbar-collapse">
+                    </div>
+                </div>
+            </nav>
+            <div class="content" id='content-{{ panel_name }}'>
+                <div class="container-fluid">
+                    <div class="row">
+                    {% for card in panel.content %}
+                      {% set id = "{}-{}-{}".format(panel_name, card.type, loop.index) %}
+                      {% if card.type == 'valueview' %}
+                      {{ valueview(id, card.title, card.value, card.color, card.icon, card.hint) }}
+                      {% elif card.type == 'graphview' %}
+                      {{ graphview(id, card.title, card.subtitle, card.color, card.hint, card.style, card.data, card.options) }}
+                      {% elif card.type == 'preview' %}
+                      <iframe src="./index.pdf" width="100%" height="100%" style="position:relative; height: 85vh;border:0;"></iframe>
+                      {% endif %}
+                    {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <footer class="footer">
+                <div class="container-fluid">
+                    <p class="copyright pull-right">
+                        &copy; <script>document.write(new Date().getFullYear())</script> <a href="https://github.com/hackerhelmut/">Rolf Meyer</a>, made with love for a better tex
+                    </p>
+                </div>
+            </footer>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!--   Core JS Files   -->
+    <script src="assets/js/jquery-3.1.0.min.js" type="text/javascript"></script>
+    <script src="assets/js/moment.min.js" type="text/javascript"></script>
+    <script src="assets/js/bootstrap.min.js" type="text/javascript"></script>
+    <script src="assets/js/material.min.js" type="text/javascript"></script>
+
+    <!--  Charts Plugin -->
+    <script src="assets/js/chartist.min.js"></script>
+
+    <!--  Notifications Plugin    -->
+    <script src="assets/js/bootstrap-notify.js"></script>
+
+    <!-- Material Dashboard javascript methods -->
+    <script src="assets/js/material-dashboard.js"></script>
+
+    <!-- Material Dashboard DEMO methods, don't include it in your project! -->
+    <script src="assets/js/demo.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function(){
+            var links = $('[data-hide]');
+            var panels = $('.main-panel');
+            var first = false;
+            links.each(function() {
+              var link = $(this);
+              var href = link.attr('href');
+              link.click(function() {
+                panels.each(function() {
+                  var panel = $(this);
+                  if('#'+panel.attr('id')===href) {
+                    panel.show();
+                  } else {
+                    panel.hide();
+                  }
+                });
+                links.each(function() {
+                  var curr = $(this);
+                  if(curr[0] == link[0]) {
+                    curr.parent().addClass('active');
+                  } else {
+                    curr.parent().removeClass('active');
+                  }
+                });
+              });
+            });
+            panels.each(function() {
+              var panel = $(this);
+              if(!first) {
+                panel.show();
+                first = true;
+              } else {
+                panel.hide();
+              }
+            });
+
+
+            {% macro jsvalueview(id, title, value, color, icon, hint, script) -%}
+            {% if script %}
+            $(function(){
+              {{ script }}
+            });
+            {% endif %}
+            {%- endmacro %}
+            {% macro jsgraphview(id, title, subtitle, color, hint, style, data, options, script) %}
+            $(function(){
+              var data = {{ data|resolve|json }};
+              var options = {{ options|json }};
+              options['lineSmooth'] = Chartist.Interpolation.cardinal({tension: 0});
+
+              // Time Series
+              options['axisX'] = {
+                type: Chartist.FixedScaleAxis,
+                //divisor: 5,
+                labelInterpolationFnc: function(value) {
+                  return moment(value).format('MMM-DD');
+                }
+              };
+              $.each(data['labels'], function(idx, value){
+                data['labels'][idx] = new Date(value);
+              });
+
+              var graphview = Chartist.Line('#{{ id }} .ct-chart', data, options);
+              md.startAnimationForLineChart(graphview);
+              
+              {% if script %}{{ script }}{% endif %}
+            });
+            {% endmacro %}
+
+            {% for panel_name, panel in panels.items() %}
+                {% for card in panel.content %}
+                    {% set id = "{}-{}-{}".format(panel_name, card.type, loop.index) %}
+                    {% if card.type == 'valueview' %}
+                    {{ jsvalueview(id, card.title, card.value, card.color, card.icon, card.hint, card.script) }}
+                    {% elif card.type == 'graphview' %}
+                    {{ jsgraphview(id, card.title, card.subtitle, card.color, card.hint, card.style, card.data, card.options, card.script) }}
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
+
+            // Javascript method's body can be found in assets/js/demos.js
+            //demo.initDashboardPageCharts();
+
+        });
+    </script>
+</body>
+
+
+</html>
